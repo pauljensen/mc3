@@ -16,5 +16,5 @@ The first examines the results of computing the basis for the null space for S v
 uses connectivity analysis; and the third utilizes Flux Variability Analysis. MC^3 takes as input
 a stoichiometric matrix and flux constraints, and generates a report summarizing issues.
 
-Please reference the 2013 BMC Systems Biology paper, "MC3: a steady-state model and constraint
+Please reference the 2013 BMC Systems Biology paper, "MC^3: a steady-state model and constraint
 consistency Checker for biochemical networks", by Mona Yousofshahi, Ehsan Ullah, Russell Stern, and Soha Hassoun.
