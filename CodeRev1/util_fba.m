@@ -38,14 +38,36 @@
 %   6 solution is unbounded
 
 function [f, status] = util_fba(S, mx, c, vlb, vub)
-    a = S;
-    b = zeros(size(S, 1), 1);
-    ctype(1:size(a,1)) = 'S';
-    vartype(1:size(a,2)) = 'C';
-    if(strcmp(mx, 'max'))
-        mx = -1;
-    else
-        mx = 1;
+    global MC3_SOLVER
+    if isempty(MC3_SOLVER) || strcmpi(MC3_SOLVER,'glpk')
+        a = S;
+        b = zeros(size(S, 1), 1);
+        ctype(1:size(a,1)) = 'S';
+        vartype(1:size(a,2)) = 'C';
+        if(strcmp(mx, 'max'))
+            mx = -1;
+        else
+            mx = 1;
+        end
+        [xopt, f, status, extra] = glpk (c, a, b, vlb, vub, ctype, vartype, mx);
+    elseif strcmpi(MC3_SOLVER,'gurobi')
+        model.A = S;
+        model.obj = c;
+        model.sense = repmat('=',size(S,1),1);
+        model.rhs = zeros(size(S,1),1);
+        model.lb = vlb;
+        model.ub = vub;
+        model.modelsense = mx;
+        params.OutputFlag = 0;
+        sol = gurobi(model,params);
+        gurobi_status = containers.Map( ...
+            {'INF_OR_UNBD','SUBOPTIMAL','INFEASIBLE','OPTIMAL','UNBOUNDED'}, ...
+            [1 2 3 5 6]);
+        if isfield(sol,'objval')
+            f = sol.objval;
+        else
+            f = 0;
+        end
+        status = gurobi_status(sol.status);
     end
-    [xopt, f, status, extra] = glpk (c, a, b, vlb, vub, ctype, vartype, mx);
 end
