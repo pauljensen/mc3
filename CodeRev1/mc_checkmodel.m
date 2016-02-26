@@ -43,6 +43,9 @@
 %CR  - List of coupled reactions
 %RCR - List of coupled reactions that cannot carry a non-zero flux without violating irreversibility on kernel
 
+%If called with only a single output, retuns a struct with the above
+%fields.
+
 function [SCM, DEM, ZFR, UR, CR, RCR] = mc_checkmodel(fileType, checkType, fileName, varargin)
     SCM = [] ; DEM = []; ZFR = []; UR = []; CR = []; RCR = []; 
     if nargin < 3
@@ -111,4 +114,9 @@ function [SCM, DEM, ZFR, UR, CR, RCR] = mc_checkmodel(fileType, checkType, fileN
     if (checkType ~= 0 && checkType ~= 1 && checkType ~= 2)
         error('Please enter either 0, 1, or 2 for checkType');
     end
+    
+    if nargout <= 1
+        SCM = struct('SCM',SCM,'DEM',DEM','ZFR',ZFR,'UR',UR,'CR',CR,'RCR',RCR);
+    end
+    
    
