@@ -23,6 +23,12 @@
 %2.externalM - external metabolites IDs
 %3.OverrideUserBounds - functions use the user specified boundaries
 
+%Using a COBRA Toolbox model
+%If you have already loaded a model for use with the COBRA Toolbox,
+%you can pass the model structure directly to this function:
+%   mc_checkmodel('cobra',checkType,model)
+%where MODEL is a struct.
+
 %examples:
 % mc_checkmodel('xls',1,'Model.xls','S','exchangeR',[], 'bounds')
 % mc_checkmodel('xls',1,'Model.xls','S','exchangeR')
@@ -64,6 +70,12 @@ function [SCM, DEM, ZFR, UR, CR, RCR] = mc_checkmodel(fileType, checkType, fileN
         elseif length(varargin)==4
             [S, Revs, ExcR, ExcM, Lb, Ub] = util_readModelFromSpreadsheet(fileName, varargin{1}, varargin{2}, varargin{3}, varargin{4});
         end
+    elseif strcmp(fileType,'cobra')
+        % fileName is a Cobra model structure
+        cobra = fileName;
+        assert(isstruct(fileName), 'third argument must be a Cobra Toolbox model struct');
+        ExcR = cobra.rxns(sum(abs(cobra.S),1) == 1);
+        [S, Revs, Lb, Ub] = deal(cobra.S, cobra.rev, cobra.lb, cobra.ub);
     else
         error('Please enter either ''SBML'' or ''xls'' for fileType');
     end
