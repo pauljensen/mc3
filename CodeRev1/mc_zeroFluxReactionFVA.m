@@ -30,10 +30,15 @@
 %containing a single index
 
 function [ZeroFluxFBA] = mc_zeroFluxReactionFVA(minFBA, min_status, maxFBA, max_status)
-    ZeroFluxFBA = [];
-    for i = 1:size(minFBA, 2)
-        if(min_status(i) == 5 && max_status(i) == 5 && minFBA(i) == 0 && maxFBA(i) == 0)
-           ZeroFluxFBA = [ZeroFluxFBA ; i];
-        end
+    global MC3_ZEROTOL
+    if isempty(MC3_ZEROTOL)
+       tol = 1e-9;
+    else
+        tol = MC3_ZEROTOL;
     end
+    
+    ZeroFluxFBA = find(min_status == 5 & ...
+                       max_status == 5 & ...
+                       abs(minFBA) < tol & ...
+                       abs(maxFBA) < tol);
 end

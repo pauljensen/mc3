@@ -35,12 +35,8 @@
 %incorrectly marked as reversible
 
 function [irreversibleFBA] = mc_unsatisfiedReversibilityFVA(min, min_status, max, max_status, Revs)
-revindex = find(Revs == 1);
-irreversibleFBA = [];
-directionFBA = [];
-for i = 1:length(revindex)
-    if(min_status(revindex(i)) == 5 && max_status(revindex(i)) == 5 && min(revindex(i)) * max(revindex(i)) >= 0)
-        irreversibleFBA = [irreversibleFBA ; revindex(i)];
-    end
-end
+
+isRev = min_status == 5 & max_status == 5 & min .* max >= 0;
+irreversibleFBA = find(isRev(:) & Revs(:) == 1);
+
 end
